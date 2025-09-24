@@ -1,0 +1,27 @@
+{
+  "name": "sanat-project-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/njvbsvgv/sanat-project-api.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/njvbsvgv/sanat-project-api/issues"
+  },
+  "homepage": "https://github.com/njvbsvgv/sanat-project-api#readme",
+  "dependencies": {
+    "dotenv": "^17.2.2",
+    "express": "^5.1.0",
+    "mongoos": "^0.0.1-security",
+    "multer": "^2.0.2"
+  }
+}
