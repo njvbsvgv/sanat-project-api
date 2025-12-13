@@ -1,0 +1,35 @@
+{
+  "headingText": {
+    "title": "",
+    "description": ""
+  },
+  "aboutProducts": {
+    "title": "",
+    "descrption": "",
+    "products": [{ "title": "", "desxription": "" }]
+  },
+  "singleQuestion": {
+    "question": "",
+    "answerToTheQuestion": ""
+  },
+  "ourPositivePoints": {
+    "title": "",
+    "tips": [
+        {"tipsTitle": "", "tipsDescription": ""}
+    ]
+  },
+  "aboutMeAndMyWork": {
+    "aboutMe": {
+        "title": "",
+        "description": ""
+    },
+    "myWork": {
+        "yearsOfActivity": "",
+        "OrganicMeat": "",
+        "authenticBrand": ""
+    }
+  },
+  "frequentlyAskedQuestions": [
+    {"question": "", "answerToTheQuestion": ""}
+  ]
+}
