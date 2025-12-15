@@ -26,6 +26,7 @@ const landingReportSchema = new Schema({
   },
   aboutMeAndMyWork: {
     aboutMe: {
+      companyName: type,
       title: type,
       description: type,
     },

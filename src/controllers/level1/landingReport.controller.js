@@ -34,6 +34,7 @@ const updateReport = async (req, res, next) => {
         ourPositivePoints.tips !== "" &&
         aboutMeAndMyWork.aboutMe.title !== "" &&
         aboutMeAndMyWork.aboutMe.description !== "" &&
+        aboutMeAndMyWork.aboutMe.companyName !== "" &&
         aboutMeAndMyWork.myWork.yearsOfActivity !== "" &&
         aboutMeAndMyWork.myWork.OrganicMeat !== "" &&
         aboutMeAndMyWork.myWork.authenticBrand !== "" &&
@@ -78,6 +79,7 @@ const updateReport = async (req, res, next) => {
               aboutMeAndMyWork: {
                 aboutMe: {
                   title: aboutMeAndMyWork.aboutMe.title,
+                  companyName: aboutMeAndMyWork.aboutMe.companyName,
                   description: aboutMeAndMyWork.aboutMe.description,
                 },
                 myWork: {
