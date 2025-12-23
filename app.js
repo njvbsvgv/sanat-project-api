@@ -34,7 +34,8 @@ app.use("/project/api", productCommentRouter);
 
 const PORT = process.env.PORT || 4001;
 mongoose
-  .connect("mongodb://127.0.0.1:27017/sanatProjectDataBase")
+  // .connect("mongodb://127.0.0.1:27017/sanatProjectDataBase")
+  .connect(process.env.MONGO_URL)
   .then(() => {
     app.listen(PORT);
   })
