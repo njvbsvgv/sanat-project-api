@@ -58,9 +58,7 @@ const addNewsImage = async (req, res, next) => {
     // const uploadImage = getImageUrl.getImageUrl(req, req.file)
     const imageUrl = await useUploadImage(req.file.buffer, "uploads");
     const findData = await NewsModel.findOne({_id: NewsId})
-    await NewsModel.updateOne({_id: NewsId},{
-      image: [...findData.image, imageUrl]
-    })
+    await NewsModel.updateOne({_id: NewsId}, {$set: {image: [{src: imageUrl}]}})
     const updatedNews = await NewsModel.findOne({_id: NewsId})
     return res.status(201).json({ message: "عکس با موفقیت اضافه شد", data: updatedNews })
   }catch (error) {

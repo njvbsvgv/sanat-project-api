@@ -5,7 +5,7 @@ const type = { type: String, required: true };
 const type2 = { type: String, required: false };
 
 const NewsSchema = new Schema({
-  image: { type: [String], required: true },
+  image: { type: [{ src: type }], required: true },
   title: type,
   googleTitle: type,
   description: type,
