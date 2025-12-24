@@ -5,7 +5,8 @@ const {
   dataValidationFn,
 } = require("../../core/utility/dataValidationMethode");
 const { dateGenerator } = require("../../core/utility/date-generator");
-const getImageUrl = require("../../core/utility/upload");
+const { useUploadImage } = require("../../core/utility/upload");
+// const getImageUrl = require("../../core/utility/upload");
 
 const createNews = async (req, res, nex) => {
   if (req.body) {
@@ -54,10 +55,11 @@ const createNews = async (req, res, nex) => {
 const addNewsImage = async (req, res, next) => {
   try {
     const { NewsId } = req.params
-    const uploadImage = getImageUrl.getImageUrl(req, req.file)
+    // const uploadImage = getImageUrl.getImageUrl(req, req.file)
+    const imageUrl = await useUploadImage(req.file.buffer, "uploads");
     const findData = await NewsModel.findOne({_id: NewsId})
     await NewsModel.updateOne({_id: NewsId},{
-      image: [...findData.image, uploadImage]
+      image: [...findData.image, imageUrl]
     })
     const updatedNews = await NewsModel.findOne({_id: NewsId})
     return res.status(201).json({ message: "عکس با موفقیت اضافه شد", data: updatedNews })

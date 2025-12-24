@@ -1,6 +1,7 @@
 const { dateGenerator } = require("../../core/utility/date-generator");
 const { filterProducts } = require("../../core/utility/filter-products");
-const getImageUrl = require("../../core/utility/upload");
+const { useUploadImage } = require("../../core/utility/upload");
+// const getImageUrl = require("../../core/utility/upload");
 const Product = require("../../models/level1/createProduct-models");
 const ProductTypes = require("../../models/level1/productType.model")
 
@@ -172,11 +173,12 @@ const addImage = async (req, res, next) => {
     const { productId } = req.params;
     if (productId && productId !== "") {
       try {
-        const image = getImageUrl.getImageUrl(req, req.file);
+        // const image = getImageUrl.getImageUrl(req, req.file);
+        const imageUrl = await useUploadImage(req.file.buffer, "uploads");
         const findProduct = await Product.findOne({ _id: productId });
         const updated = await Product.updateOne(
           { _id: productId },
-          { $set: { imageAddress: image, photos: [findProduct.photos, image] } }
+          { $set: { imageAddress: image, photos: [findProduct.photos, imageUrl] } }
         );
         return res.status(updated.acknowledged ? 201 : 500).json({
           message: updated.acknowledged ? "عکس با موفقیت اضافه شد" : "",

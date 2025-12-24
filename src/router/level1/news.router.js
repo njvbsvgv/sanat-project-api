@@ -12,7 +12,7 @@ const {
   getAllNewsType,
   getSingleNewsType,
 } = require("../../controllers/level1/newsType.controller");
-const { uploadImageController } = require("../../core/utility/upload");
+// const { uploadImageController } = require("../../core/utility/upload");
 // const uploader = require("../../core/utility/upload");
 
 const router = express.Router();
@@ -20,8 +20,8 @@ const storage = multer.memoryStorage(); // فایل در حافظه نگه دا�
 const upload = multer({ storage });
 
 router.post("/createNews", createNews);
-router.post("/createNewsItems/:NewsId", uploader.upload.single("image"), createNewsItem);
-router.post("/addImageNews/:NewsId", upload.single("image"), uploadImageController);
+router.post("/createNewsItems/:NewsId", upload.single("image"), createNewsItem);
+router.post("/addImageNews/:NewsId", upload.single("image"), addNewsImage);
 router.get("/getNewsLists", getAllNews);
 router.get("/getTopNews", getTopNews);
 router.get("/getNewsByRate", getNewsByRate);
