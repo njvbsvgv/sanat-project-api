@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const controllers = require("../../controllers/level1/product.controller");
-const uploader = require("../../core/utility/upload");
+// const uploader = require("../../core/utility/upload");
 
 const storage = multer.memoryStorage(); // فایل در حافظه نگه داشته می‌شود
 const upload = multer({ storage });
