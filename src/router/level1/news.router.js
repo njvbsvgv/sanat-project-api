@@ -12,6 +12,7 @@ const {
   getAllNewsType,
   getSingleNewsType,
 } = require("../../controllers/level1/newsType.controller");
+const multer = require("multer");
 // const { uploadImageController } = require("../../core/utility/upload");
 // const uploader = require("../../core/utility/upload");
 
