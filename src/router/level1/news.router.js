@@ -6,6 +6,7 @@ const {
   getNewsByRate,
   getSingleNews,
   createNewsItem,
+  addNewsImage,
 } = require("../../controllers/level1/news.controller");
 const {
   getAllNewsType,
@@ -17,6 +18,7 @@ const router = express.Router();
 
 router.post("/createNews", createNews);
 router.post("/createNewsItems/:NewsId", uploader.upload.single("image"), createNewsItem);
+router.post("/addImageNews/:NewsId", uploader.upload.single("image"), addNewsImage);
 router.get("/getNewsLists", getAllNews);
 router.get("/getTopNews", getTopNews);
 router.get("/getNewsByRate", getNewsByRate);

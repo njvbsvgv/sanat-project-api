@@ -51,6 +51,21 @@ const createNews = async (req, res, nex) => {
   }
 };
 
+const addNewsImage = async (req, res, next) => {
+  try {
+    const { NewsId } = req.params
+    const uploadImage = getImageUrl.getImageUrl(req, req.file)
+    const findData = await NewsModel.findOne({_id: NewsId})
+    await NewsModel.updateOne({_id: NewsId},{
+      image: [...findData.image, uploadImage]
+    })
+    const updatedNews = await NewsModel.findOne({_id: NewsId})
+    return res.status(201).json({ message: "عکس با موفقیت اضافه شد", data: updatedNews })
+  }catch (error) {
+    return res.status(500).json({ message: "ارور سمت سرور", message2: error.message })
+  }
+}
+
 const createNewsItem = async (req, res, next) => {
   if (req.body) {
     const { NewsId } = req.params;
@@ -181,4 +196,5 @@ module.exports = {
   getTopNews,
   getNewsByRate,
   getSingleNews,
+  addNewsImage
 };
