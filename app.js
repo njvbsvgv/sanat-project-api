@@ -32,11 +32,12 @@ app.use("/project/api", productTypeRouter);
 app.use("/project/api", newsRouter);
 app.use("/project/api", productCommentRouter);
 
-const PORT = process.env.PORT || 3000;
+// const PORT = process.env.PORT || 3000;
+const PORT2 = process.env.PORT || 4001;
 mongoose
   // .connect("mongodb://127.0.0.1:27017/sanatProjectDataBase")
   .connect(process.env.MONGO_URI)
   .then(() => {
-    app.listen(PORT);
+    app.listen(PORT2);
   })
   .catch((error) => console.log("error ==>", error));

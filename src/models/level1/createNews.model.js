@@ -22,6 +22,16 @@ const NewsSchema = new Schema({
       miniDescribe: type2,
     },
   ],
+  useInCooking: {
+    title: { type: String, required: true },
+    tips: [
+      {
+        title: { type: String, required: true },
+        description: { type: String, required: true },
+      },
+    ],
+  },
+  keyPoints: { type: [String], required: true },
 });
 
 module.exports = mongoose.model("news", NewsSchema);

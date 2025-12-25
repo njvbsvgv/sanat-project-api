@@ -17,6 +17,8 @@ const createNews = async (req, res, nex) => {
       studyTime,
       categoriesList,
       titleCategories,
+      useInCooking,
+      keyPoints,
       rating,
     } = req.body;
     if (
@@ -25,6 +27,10 @@ const createNews = async (req, res, nex) => {
       description != "" &&
       studyTime != "" &&
       categoriesList.length != 0 &&
+      useInCooking.title != "" &&
+      useInCooking.tips.title != "" &&
+      useInCooking.tips.description != "" &&
+      keyPoints.length != 0 &&
       titleCategories != ""
     ) {
       const newNews = new NewsModel({
@@ -36,6 +42,8 @@ const createNews = async (req, res, nex) => {
         updateAt: dateGenerator(),
         createAt: dateGenerator(),
         categoriesList,
+        useInCooking,
+        keyPoints,
         studyTime,
         newsItems: null,
         rating,
@@ -58,7 +66,7 @@ const addNewsImage = async (req, res, next) => {
     // const uploadImage = getImageUrl.getImageUrl(req, req.file)
     const imageUrl = await useUploadImage(req.file.buffer, "uploads");
     const findData = await NewsModel.findOne({_id: NewsId})
-    await NewsModel.updateOne({_id: NewsId}, {$set: {image: [{src: imageUrl}]}})
+    await NewsModel.updateOne({_id: NewsId}, {$set: {image: [...findData.image, {src: imageUrl}]}})
     const updatedNews = await NewsModel.findOne({_id: NewsId})
     return res.status(201).json({ message: "عکس با موفقیت اضافه شد", data: updatedNews })
   }catch (error) {
@@ -70,27 +78,16 @@ const createNewsItem = async (req, res, next) => {
   if (req.body) {
     const { NewsId } = req.params;
     const { title, miniDescription } = req.body;
-    const image = getImageUrl.getImageUrl(req, req.file);
-    console.log(image, title, miniDescription);
+    const imageUrl = await useUploadImage(req.file.buffer, "uploads");
+    console.log(imageUrl, title, miniDescription);
     if (title && title != "" && miniDescription && miniDescription != "") {
-      const newsData = await NewsModel.findOne({ _id: NewsId });
       await NewsModel.updateOne(
         { _id: NewsId },
         {
           $set: {
-            image: newsData.image,
-            title: newsData.title,
-            googleTitle: newsData.googleTitle,
-            description: newsData.description,
-            studyTime: newsData.studyTime,
-            rating: newsData.rating,
-            titleCategories: newsData.titleCategories,
-            createAt: newsData.createAt,
-            updateAt: newsData.updateAt,
-            categoriesList: newsData.categoriesList,
             newsItems: [
               {
-                image: image,
+                image: imageUrl,
                 title: title,
                 miniDescribe: miniDescription,
               },
