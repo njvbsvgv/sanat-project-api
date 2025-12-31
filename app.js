@@ -17,12 +17,14 @@ const exportingCountryRouter = require("./src/router/level1/exportingCountry.rou
 const productTypeRouter = require("./src/router/level1/productType.router")
 const newsRouter = require("./src/router/level1/news.router")
 const productCommentRouter = require("./src/router/level1/productComment.router")
+const newsCommentRouter = require("./src/router/level1/newsComment.router")
+const authRouter = require("./src/router/level1/auth.router")
 
 
 
 app.use("/project/api", productRouter);
 app.use("/project/api", locationRouter);
-app.use("/project/api", loginRouter);
+// app.use("/project/api", loginRouter);
 app.use("/project/api", landingRouter);
 app.use("/project/api", commentAboutUseRouter);
 app.use("/project/api", sellerInformationRouter);
@@ -31,6 +33,8 @@ app.use("/project/api", exportingCountryRouter);
 app.use("/project/api", productTypeRouter);
 app.use("/project/api", newsRouter);
 app.use("/project/api", productCommentRouter);
+app.use("/project/api", newsCommentRouter);
+app.use("/project/api", authRouter);
 
 // const PORT = process.env.PORT || 3000;
 const PORT2 = process.env.PORT || 4001;

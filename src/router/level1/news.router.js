@@ -7,6 +7,8 @@ const {
   getSingleNews,
   createNewsItem,
   addNewsImage,
+  updateNews,
+  getSimilarNewsByType,
 } = require("../../controllers/level1/news.controller");
 const {
   getAllNewsType,
@@ -29,5 +31,7 @@ router.get("/getNewsByRate", getNewsByRate);
 router.get("/getNewsTypeList", getAllNewsType);
 router.get("/getSingleNewsType", getSingleNewsType);
 router.get("/getSingleNews/:newsId", getSingleNews)
+router.put("/updateNews/:NewsId", updateNews)
+router.get("/getSimilarNewsByType/:NewsId", getSimilarNewsByType)
 
 module.exports = router;

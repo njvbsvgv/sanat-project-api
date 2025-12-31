@@ -88,4 +88,21 @@ const uploadImageController = async (req, res) => {
   }
 };
 
-module.exports = {useUploadImage, uploadImageController};
+
+
+const useUploadVideo = async (fileBuffer, folder = "uploads") => {
+  if (!fileBuffer) throw new Error("No file provided");
+
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      { folder, resource_type: "video" }, // این خط مهمه برای ویدیو
+      (error, result) => {
+        if (error) reject(error);
+        else resolve(result.secure_url);
+      }
+    );
+    stream.end(fileBuffer);
+  });
+};
+
+module.exports = {useUploadImage, uploadImageController, useUploadVideo};

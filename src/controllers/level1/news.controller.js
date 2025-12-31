@@ -60,19 +60,99 @@ const createNews = async (req, res, nex) => {
   }
 };
 
+const updateNews = async (req, res, next) => {
+  if (req.body) {
+    const {
+      title,
+      titleCategories,
+      description,
+      googleTitle,
+      updateAt,
+      createAt,
+      categoriesList,
+      useInCooking,
+      keyPoints,
+      studyTime,
+      newsItems,
+      rating,
+    } = req.body;
+    if (
+      title != "" &&
+      googleTitle != "" &&
+      createAt != "" &&
+      updateAt != "" &&
+      newsItems.length >= 0 &&
+      rating != "" &&
+      description != "" &&
+      studyTime != "" &&
+      categoriesList.length != 0 &&
+      useInCooking.title != "" &&
+      useInCooking.tips.title != "" &&
+      useInCooking.tips.description != "" &&
+      keyPoints.length != 0 &&
+      titleCategories != ""
+    ) {
+      try {
+        const { NewsId } = req.params;
+        const updateNews = await NewsModel.updateOne(
+          { _id: NewsId },
+          {
+            $set: {
+              title,
+              titleCategories,
+              description,
+              googleTitle,
+              updateAt,
+              createAt,
+              categoriesList,
+              useInCooking,
+              keyPoints,
+              studyTime,
+              newsItems,
+              rating,
+            },
+          }
+        );
+        if (updateNews.acknowledged) {
+          return res
+            .status(200)
+            .json({ message: "مقاله جدید با موفقیت ساخته شد" });
+        }else {
+          return res.status(500).json({ message: "مشکلی پیش اومد لطفا مجدد انتحان کنید" })
+        }
+      } catch (error) {
+        return res.status(500).json({ message: "ارور سمت سرور", message2: error.message })
+      }
+    } else {
+      return res
+        .status(400)
+        .json({ message: "لطفا تمامی فیلدها را با دقت پر کنید" });
+    }
+  } else {
+    return res.status(400).json({ message: "فیلدها خالیست" });
+  }
+};
+
 const addNewsImage = async (req, res, next) => {
   try {
-    const { NewsId } = req.params
+    const { NewsId } = req.params;
     // const uploadImage = getImageUrl.getImageUrl(req, req.file)
     const imageUrl = await useUploadImage(req.file.buffer, "uploads");
-    const findData = await NewsModel.findOne({_id: NewsId})
-    await NewsModel.updateOne({_id: NewsId}, {$set: {image: [...findData.image, {src: imageUrl}]}})
-    const updatedNews = await NewsModel.findOne({_id: NewsId})
-    return res.status(201).json({ message: "عکس با موفقیت اضافه شد", data: updatedNews })
-  }catch (error) {
-    return res.status(500).json({ message: "ارور سمت سرور", message2: error.message })
+    const findData = await NewsModel.findOne({ _id: NewsId });
+    await NewsModel.updateOne(
+      { _id: NewsId },
+      { $set: { image: [...findData.image, { src: imageUrl }] } }
+    );
+    const updatedNews = await NewsModel.findOne({ _id: NewsId });
+    return res
+      .status(201)
+      .json({ message: "عکس با موفقیت اضافه شد", data: updatedNews });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "ارور سمت سرور", message2: error.message });
   }
-}
+};
 
 const createNewsItem = async (req, res, next) => {
   if (req.body) {
@@ -186,6 +266,18 @@ const getSingleNews = async (req, res, next) => {
   }
 };
 
+const getSimilarNewsByType = async (req, res, next) => {
+  try {
+    const { NewsId } = req.params
+    const findDataFromNewsList = await NewsModel.findOne({_id: NewsId})
+    const findDataFromTypeList = await ProductType.findOne({name: findDataFromNewsList.titleCategories})
+    const newData = await NewsModel.find({titleCategories: findDataFromTypeList.name})
+    return res.status(200).json({ data: newData })
+  }catch (error) {
+    return res.status(500).json({ message: "ارور سمت سرور", message2: error.message })
+  }
+}
+
 module.exports = {
   createNews,
   createNewsItem,
@@ -193,5 +285,7 @@ module.exports = {
   getTopNews,
   getNewsByRate,
   getSingleNews,
-  addNewsImage
+  addNewsImage,
+  updateNews,
+  getSimilarNewsByType
 };
