@@ -40,7 +40,7 @@ app.use("/project/api", authRouter);
 const PORT2 = process.env.PORT || 4001;
 mongoose
   // .connect("mongodb://127.0.0.1:27017/sanatProjectDataBase")
-  .connect(process.env.MONGO_URI)
+  .connect(process.env.PARSPACK_MONGODB_URI)
   .then(() => {
     app.listen(PORT2);
   })
