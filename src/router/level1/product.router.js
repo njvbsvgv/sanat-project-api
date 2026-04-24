@@ -18,6 +18,9 @@ router.post(
 router.get("/getProductLists", controllers.productControllers.getProductsList)
 router.get("/getSingleProduct/:id", controllers.productControllers.getSingleProduct)
 router.get("/getSimilarPeoducts/:productTypeId", controllers.productControllers.getSimilarProducts)
+router.post("/CreateProduct", controllers.productControllers.createProduct)
+router.post("/addProductImage/:productId", upload.single("image"), controllers.productControllers.addImage)
+router.delete("/DeleteProduct/:ProductId", controllers.productControllers.deleteProduct)
 
 
 module.exports = router;

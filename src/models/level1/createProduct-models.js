@@ -29,3 +29,15 @@ const createProductSchema = new Schema({
 });
 
 module.exports = mongoose.model("products", createProductSchema);
+
+// title,
+//       description,
+//       miniDescription,
+//       useInCooking,
+//       quality,
+//       xportingCountry,
+//       keyPoints,
+//       type,
+//       brand,
+//       isBones,
+//       price,

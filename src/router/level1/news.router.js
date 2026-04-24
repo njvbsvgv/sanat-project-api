@@ -9,17 +9,19 @@ const {
   addNewsImage,
   updateNews,
   getSimilarNewsByType,
+  addNewsRate,
+  deleteNewsRate
 } = require("../../controllers/level1/news.controller");
 const {
   getAllNewsType,
   getSingleNewsType,
+  createNewsType,
 } = require("../../controllers/level1/newsType.controller");
 const multer = require("multer");
-// const { uploadImageController } = require("../../core/utility/upload");
-// const uploader = require("../../core/utility/upload");
+const { middleware } = require("../../core/utility/middleware");
 
 const router = express.Router();
-const storage = multer.memoryStorage(); // فایل در حافظه نگه داشته می‌شود
+const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
 router.post("/createNews", createNews);
@@ -33,5 +35,8 @@ router.get("/getSingleNewsType", getSingleNewsType);
 router.get("/getSingleNews/:newsId", getSingleNews)
 router.put("/updateNews/:NewsId", updateNews)
 router.get("/getSimilarNewsByType/:NewsId", getSimilarNewsByType)
+router.post("/createNewsType", createNewsType)
+router.post("/addNewsRate/:NewsId", middleware, addNewsRate)
+router.post("/deleteNewsRate/:NewsId", middleware, deleteNewsRate)
 
 module.exports = router;

@@ -15,6 +15,8 @@ const NewsSchema = new Schema({
   categoriesList: [type],
   titleCategories: type,
   rating: type,
+  likeCount: type,
+  dislikeCount: type,
   newsItems: [
     {
       image: type,

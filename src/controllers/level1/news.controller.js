@@ -1,11 +1,13 @@
 const NewsModel = require("../../models/level1/createNews.model");
-const ProductType = require("../../models/level1/productType.model");
+const NewsTypeModel = require("../../models/level1/newsType.model");
+const NewsLikeAndDislikeDBModel = require("../../models/level1/newsLikeAndDislike.model");
 const {
   dataValidationMethode,
   dataValidationFn,
 } = require("../../core/utility/dataValidationMethode");
 const { dateGenerator } = require("../../core/utility/date-generator");
-const { useUploadImage } = require("../../core/utility/upload");
+const uploadMedia = require("../../core/utility/upload");
+const tokenDeCoded = require("../../core/utility/tokenDeCoded");
 // const getImageUrl = require("../../core/utility/upload");
 
 const createNews = async (req, res, nex) => {
@@ -111,17 +113,21 @@ const updateNews = async (req, res, next) => {
               newsItems,
               rating,
             },
-          }
+          },
         );
         if (updateNews.acknowledged) {
           return res
             .status(200)
             .json({ message: "مقاله جدید با موفقیت ساخته شد" });
-        }else {
-          return res.status(500).json({ message: "مشکلی پیش اومد لطفا مجدد انتحان کنید" })
+        } else {
+          return res
+            .status(500)
+            .json({ message: "مشکلی پیش اومد لطفا مجدد انتحان کنید" });
         }
       } catch (error) {
-        return res.status(500).json({ message: "ارور سمت سرور", message2: error.message })
+        return res
+          .status(500)
+          .json({ message: "ارور سمت سرور", message2: error.message });
       }
     } else {
       return res
@@ -137,11 +143,12 @@ const addNewsImage = async (req, res, next) => {
   try {
     const { NewsId } = req.params;
     // const uploadImage = getImageUrl.getImageUrl(req, req.file)
-    const imageUrl = await useUploadImage(req.file.buffer, "uploads");
+    // const imageUrl = await useUploadImage(req.file.buffer, "uploads");
+    const imageUrl = await uploadMedia(req.file.buffer, "uploads", "image/");
     const findData = await NewsModel.findOne({ _id: NewsId });
     await NewsModel.updateOne(
       { _id: NewsId },
-      { $set: { image: [...findData.image, { src: imageUrl }] } }
+      { $set: { image: [...findData.image, { src: imageUrl }] } },
     );
     const updatedNews = await NewsModel.findOne({ _id: NewsId });
     return res
@@ -173,7 +180,7 @@ const createNewsItem = async (req, res, next) => {
               },
             ],
           },
-        }
+        },
       );
       const updateData = await NewsModel.findOne({ _id: NewsId });
       return res
@@ -198,7 +205,7 @@ const getAllNews = async (req, res, next) => {
     if (TypeId && TypeId != "") {
       const findType = await ProductType.findOne({ _id: TypeId });
       filteredData = findData.filter((el) =>
-        el.categoriesList.includes(findType.name)
+        el.categoriesList.includes(findType.name),
       );
     }
 
@@ -268,15 +275,109 @@ const getSingleNews = async (req, res, next) => {
 
 const getSimilarNewsByType = async (req, res, next) => {
   try {
-    const { NewsId } = req.params
-    const findDataFromNewsList = await NewsModel.findOne({_id: NewsId})
-    const findDataFromTypeList = await ProductType.findOne({name: findDataFromNewsList.titleCategories})
-    const newData = await NewsModel.find({titleCategories: findDataFromTypeList.name})
-    return res.status(200).json({ data: newData })
-  }catch (error) {
-    return res.status(500).json({ message: "ارور سمت سرور", message2: error.message })
+    const { NewsId } = req.params;
+    const findDataFromNewsList = await NewsModel.findOne({ _id: NewsId });
+    const findDataFromTypeList = await ProductType.findOne({
+      name: findDataFromNewsList.titleCategories,
+    });
+    const newData = await NewsModel.find({
+      titleCategories: findDataFromTypeList.name,
+    });
+    return res.status(200).json({ data: newData });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "ارور سمت سرور", message2: error.message });
   }
-}
+};
+
+const addNewsRate = async (req, res, next) => {
+  try {
+    const { NewsId } = req.params;
+    const userId = tokenDeCoded(req).payload.id;
+
+    const result = await NewsLikeAndDislikeDBModel.updateOne(
+      {
+        newsId: NewsId,
+      },
+      {
+        $pull: { dislikeDB: userId },
+        $addToSet: { likeDB: userId },
+      },
+      { upsert: true },
+    );
+
+    const findData = await NewsLikeAndDislikeDBModel.findOne({
+      newsId: NewsId,
+    });
+
+    await NewsModel.findByIdAndUpdate(
+      NewsId,
+      {
+        $set: {
+          likeCount: findData.likeDB.length.toString(),
+          dislikeCount: findData.dislikeDB.length.toString(),
+          rating: findData.likeDB.length.toString(),
+        },
+      },
+      { new: true },
+    );
+
+    if (result.matchedCount && result.modifiedCount === 0) {
+      return res
+        .status(200)
+        .json({ message: "شما قبلاً این خبر را لایک کرده‌اید" });
+    }
+
+    return res.status(200).json({ message: "لایک با موفقیت ثبت شد" });
+  } catch (error) {
+    return res.status(500).json({ message: "ارور سمت سرور" });
+  }
+};
+
+const deleteNewsRate = async (req, res, next) => {
+  try {
+    const { NewsId } = req.params;
+    const userId = tokenDeCoded(req).payload.id;
+    const newsModel = new NewsModel();
+
+    const result = await NewsLikeAndDislikeDBModel.updateOne(
+      {
+        newsId: NewsId,
+      },
+      {
+        $pull: { likeDB: userId },
+        $addToSet: { dislikeDB: userId },
+      },
+      { upsert: true },
+    );
+
+    const findData = await NewsLikeAndDislikeDBModel.findOne({
+      newsId: NewsId,
+    });
+
+    await NewsModel.findByIdAndUpdate(
+      NewsId,
+      {
+        $set: {
+          dislikeCount: findData.dislikeDB.length.toString(),
+          likeCount: findData.likeDB.length.toString(),
+        },
+      },
+      { new: true },
+    );
+
+    if (result.matchedCount && result.modifiedCount === 0) {
+      return res
+        .status(200)
+        .json({ message: "شما قبلاً این خبر را دیسلایک کرده‌اید" });
+    }
+
+    return res.status(200).json({ message: "دیسلایک با موفقیت ثبت شد" });
+  } catch (error) {
+    return res.status(500).json({ message: "ارور سمت سرور" });
+  }
+};
 
 module.exports = {
   createNews,
@@ -287,5 +388,7 @@ module.exports = {
   getSingleNews,
   addNewsImage,
   updateNews,
-  getSimilarNewsByType
+  getSimilarNewsByType,
+  addNewsRate,
+  deleteNewsRate,
 };

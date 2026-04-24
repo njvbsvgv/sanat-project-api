@@ -1,6 +1,7 @@
 const { dateGenerator } = require("../../core/utility/date-generator");
 const { filterProducts } = require("../../core/utility/filter-products");
-const { useUploadImage } = require("../../core/utility/upload");
+// const { useUploadImage } = require("../../core/utility/upload");
+const uploadMedia = require("../../core/utility/upload");
 // const getImageUrl = require("../../core/utility/upload");
 const Product = require("../../models/level1/createProduct-models");
 const ProductTypes = require("../../models/level1/productType.model")
@@ -50,7 +51,8 @@ const getProductsList = async (req, res, next) => {
     .status(200)
     .json({
       data: dataValidate ? result : productList,
-      totalCount: result.length > 0 ? productList.length : result.length,
+      totalCount: result.length == 0 ? productList.length : result.length,
+      // totalCount: result.length
     });
 };
 
@@ -96,7 +98,6 @@ const createProduct = async (req, res, next) => {
       type,
       brand,
       isBones,
-      imageAddress,
       price,
     } = req.body;
     if (
@@ -108,22 +109,23 @@ const createProduct = async (req, res, next) => {
       !xportingCountry.trim() != "" ||
       !type.trim() != "" ||
       !isBones.trim() != "" ||
-      !price.trim() != ""
+      !price.trim() != "" ||
+      !keyPoints.length != 0
     ) {
       return res.status(400).json({ message: "فیلدها خالیست" });
     } else {
-      let isValidate = false;
-      useInCooking.tips.forEach((items) =>
-        items.title != "" && items.description != ""
-          ? (isValidate = true)
-          : (isValidate = false)
-      );
-      keyPoints.forEach((items) =>
-        items != "" ? (isValidate = true) : (isValidate = false)
-      );
-      brand.forEach((items) =>
-        items != "" ? (isValidate = true) : (isValidate = false)
-      );
+      let isValidate = true;
+      // useInCooking.tips.forEach((items) =>
+      //   items.title != "" && items.description != ""
+      //     ? (isValidate = true)
+      //     : (isValidate = false)
+      // );
+      // keyPoints.forEach((items) =>
+      //   items != "" ? (isValidate = true) : (isValidate = false)
+      // );
+      // brand.forEach((items) =>
+      //   items != "" ? (isValidate = true) : (isValidate = false)
+      // );
       if (isValidate) {
         const date = dateGenerator();
         try {
@@ -174,17 +176,27 @@ const addImage = async (req, res, next) => {
     if (productId && productId !== "") {
       try {
         // const image = getImageUrl.getImageUrl(req, req.file);
-        const imageUrl = await useUploadImage(req.file.buffer, "uploads");
+        const imageUrl = await uploadMedia(req.file.buffer, "uploads", "image/");
         const findProduct = await Product.findOne({ _id: productId });
-        const updated = await Product.updateOne(
-          { _id: productId },
-          { $set: { imageAddress: image, photos: [findProduct.photos, imageUrl] } }
-        );
+        let updated;
+        switch (findProduct.photos) {
+          case null:
+            updated = await Product.updateOne(
+              { _id: productId },
+              { $set: { imageAddress: imageUrl, photos: [imageUrl] } }
+            )
+            break;
+          default:
+            updated = await Product.updateOne(
+              { _id: productId },
+              { $set: { imageAddress: imageUrl, photos: [findProduct.photos, imageUrl] } }
+            )
+        }
         return res.status(updated.acknowledged ? 201 : 500).json({
           message: updated.acknowledged ? "عکس با موفقیت اضافه شد" : "",
         });
       } catch (error) {
-        return res.status(500).json({ message: "ارور سمت سرور" });
+        return res.status(500).json({ message: "ارور سمت سرور", message2: error.message });
       }
     } else {
       res.status(400).json({ message: "لطفا آیدی محصول را وارد نمایید" });
@@ -196,10 +208,25 @@ const addImage = async (req, res, next) => {
   }
 };
 
+const deleteProduct = async (req, res, next) => {
+  try {
+    const { ProductId } = req.params
+    const deleted = await Product.deleteOne({_id: ProductId})
+    if (deleted.acknowledged) {
+      return res.status(200).json({ message: "محصول مورد نظر با موفقیت حذف شد" })
+    }else {
+      return res.status(200).json({ message: "مشکلی پیش اومده، لطفا مجدد امتحان کنید" })
+    }
+  }catch (error) {
+    return res.status(500).json({ message: "ارور سمت سرور", message2: error.message })
+  }
+}
+
 exports.productControllers = {
   createProduct,
   addImage,
   getProductsList,
   getSingleProduct,
-  getSimilarProducts
+  getSimilarProducts,
+  deleteProduct
 };

@@ -1,8 +1,10 @@
 const { dateGenerator } = require("../../core/utility/date-generator");
+const tokenDeCoded = require("../../core/utility/tokenDeCoded");
 const {
   NewsCommentSchema,
   NewsCommentReplaySchema,
 } = require("../../models/level1/newsComment.model");
+const LikeAndDeslikeModel = require("../../models/level1/ProductAndNewsLikeAndDeslikeActon.model");
 
 const createNewsComment = async (req, res, next) => {
   if (req.body) {
@@ -102,9 +104,109 @@ const getNewsReplay = async (req, res, next) => {
   }
 };
 
+const updateCommentLike = async (commentId, likeCount, deslikeCount) => {
+  await NewsCommentSchema.updateOne(
+    { _id: commentId },
+    {
+      likeCount: likeCount,
+      desLikeCount: deslikeCount,
+    }
+  );
+};
+
+const likeComment = async (req, res, next) => {
+  try {
+    const { NewsId, CommentId } = req.params;
+    const userId = tokenDeCoded(req).payload.id;
+
+    const result = await LikeAndDeslikeModel.updateOne(
+      {
+        targetId: NewsId,
+        commentId: CommentId,
+      },
+      {
+        $pull: { deslikeDB: userId },
+        $addToSet: { likeDB: userId },
+      },
+      { upsert: true }
+    );
+
+    if (result.matchedCount && result.modifiedCount === 0) {
+      return res
+        .status(200)
+        .json({ message: "شما قبلاً این کامنت را لایک کرده‌اید" });
+    }
+
+    const likeDoc = await LikeAndDeslikeModel.findOne({
+      targetId: NewsId,
+      commentId: CommentId,
+    });
+
+    await updateCommentLike(
+      CommentId,
+      likeDoc.likeDB.length,
+      likeDoc.deslikeDB.length
+    );
+
+    return res.status(201).json({ message: "لایک با موفقیت انجام شد" });
+  } catch (error) {
+    return res.status(500).json({
+      message: "ارور سمت سرور",
+      error: error.message,
+    });
+  }
+};
+
+
+const dislikeComment = async (req, res, next) => {
+  try {
+    const { NewsId, CommentId } = req.params;
+    const userId = tokenDeCoded(req).payload.id;
+
+    const result = await LikeAndDeslikeModel.updateOne(
+      {
+        targetId: NewsId,
+        commentId: CommentId,
+      },
+      {
+        $pull: { likeDB: userId },
+        $addToSet: { deslikeDB: userId },
+      },
+      { upsert: true }
+    );
+
+    if (result.matchedCount && result.modifiedCount === 0) {
+      return res
+        .status(200)
+        .json({ message: "شما قبلاً این کامنت را دیسلایک کرده‌اید" });
+    }
+
+    const likeDoc = await LikeAndDeslikeModel.findOne({
+      targetId: NewsId,
+      commentId: CommentId,
+    });
+
+    await updateCommentLike(
+      CommentId,
+      likeDoc.likeDB.length,
+      likeDoc.deslikeDB.length
+    );
+
+    return res.status(201).json({ message: "دیسلایک با موفقیت انجام شد" });
+  } catch (error) {
+    return res.status(500).json({
+      message: "ارور سمت سرور",
+      error: error.message,
+    });
+  }
+};
+
+
 module.exports = {
   createNewsComment,
   getNewsCommentList,
   createNewsCommentReplay,
   getNewsReplay,
+  likeComment,
+  dislikeComment
 };
