@@ -6,21 +6,29 @@ const upload = multer();
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-const productRouter = require("./src/router/level1/product.router")
-const locationRouter = require("./src/router/level1/location.router")
-const loginRouter = require("./src/router/level1/login.router")
-const landingRouter = require("./src/router/level1/landing.router")
-const commentAboutUseRouter = require("./src/router/level1/commentAboutUse.router")
-const sellerInformationRouter = require("./src/router/level1/sellerInformation.router")
-const productPieceRouter = require("./src/router/level1/productPiece.router")
-const exportingCountryRouter = require("./src/router/level1/exportingCountry.router")
-const productTypeRouter = require("./src/router/level1/productType.router")
-const newsRouter = require("./src/router/level1/news.router")
-const productCommentRouter = require("./src/router/level1/productComment.router")
-const newsCommentRouter = require("./src/router/level1/newsComment.router")
-const authRouter = require("./src/router/level1/auth.router")
+const productRouter = require("./src/router/level1/product.router");
+const locationRouter = require("./src/router/level1/location.router");
+const loginRouter = require("./src/router/level1/login.router");
+const landingRouter = require("./src/router/level1/landing.router");
+const commentAboutUseRouter = require("./src/router/level1/commentAboutUse.router");
+const sellerInformationRouter = require("./src/router/level1/sellerInformation.router");
+const productPieceRouter = require("./src/router/level1/productPiece.router");
+const exportingCountryRouter = require("./src/router/level1/exportingCountry.router");
+const productTypeRouter = require("./src/router/level1/productType.router");
+const newsRouter = require("./src/router/level1/news.router");
+const productCommentRouter = require("./src/router/level1/productComment.router");
+const newsCommentRouter = require("./src/router/level1/newsComment.router");
+const authRouter = require("./src/router/level1/auth.router");
+const cors = require("cors");
 
-
+app.use(
+  cors({
+    origin: process.env.SITE_ADDRESS,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Authorization", "Content-Type"],
+    credentials: true,
+  }),
+);
 
 app.use("/project/api", productRouter);
 app.use("/project/api", locationRouter);
@@ -41,7 +49,8 @@ const PORT2 = process.env.PORT || 4001;
 mongoose
   // .connect("mongodb://127.0.0.1:27017/sanatProjectDataBase")
   .connect(process.env.PARSPACK_MONGODB_URI)
+  // .connect(process.env.MONGO_URI)
   .then(() => {
-    app.listen(PORT2);
+    app.listen(4001);
   })
   .catch((error) => console.log("error ==>", error));
