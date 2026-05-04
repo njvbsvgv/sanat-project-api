@@ -51,7 +51,8 @@ const getProductsList = async (req, res, next) => {
     .status(200)
     .json({
       data: dataValidate ? result : productList,
-      totalCount: result.length == 0 ? productList.length : result.length,
+      totalCount: result.length,
+      allTotalList: productList.length
       // totalCount: result.length
     });
 };
