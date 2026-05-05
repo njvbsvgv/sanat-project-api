@@ -4,7 +4,7 @@ const {
 } = require("../../models/level1/productComment.model");
 // const productAndNewsLikeAndDeslikeActonSchema = require("../../models/level1/")
 const { dateGenerator } = require("../../core/utility/date-generator");
-const LikeAndDeslikeModel = require("../../models/level1/ProductAndNewsLikeAndDeslikeActon.model");
+// const LikeAndDeslikeModel = require("../../models/level1/ProductAndNewsLikeAndDeslikeActon.model");
 const tokenDeCoded = require("../../core/utility/tokenDeCoded");
 
 const createNewComment = async (req, res, next) => {
