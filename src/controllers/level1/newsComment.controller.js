@@ -5,6 +5,7 @@ const {
   NewsCommentReplaySchema,
 } = require("../../models/level1/newsComment.model");
 const ProductAndNewsLikeAndDeslikeActonSchema = require("../../models/level1/ProductAndNewsLikeAndDeslikeActon.model");
+// ProductAndNewsLikeAndDeslikeActonSchema
 // const productAndNewsLikeAndDeslikeActonSchema = require("../../models/level1/")
 
 const createNewsComment = async (req, res, next) => {

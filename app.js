@@ -45,12 +45,12 @@ app.use("/project/api", newsCommentRouter);
 app.use("/project/api", authRouter);
 
 // const PORT = process.env.PORT || 3000;
-const PORT2 = process.env.PORT || 4001;
+const PORT = process.env.PORT || 4001;
 mongoose
   // .connect("mongodb://127.0.0.1:27017/sanatProjectDataBase")
   .connect(process.env.PARSPACK_MONGODB_URI)
   // .connect(process.env.MONGO_URI)
   .then(() => {
-    app.listen(4001);
+    app.listen(PORT);
   })
   .catch((error) => console.log("error ==>", error));
