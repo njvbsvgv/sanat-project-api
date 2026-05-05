@@ -5,6 +5,8 @@ const {
 // const productAndNewsLikeAndDeslikeActonSchema = require("../../models/level1/")
 const { dateGenerator } = require("../../core/utility/date-generator");
 // const LikeAndDeslikeModel = require("../../models/level1/ProductAndNewsLikeAndDeslikeActon.model");
+// const LikeAndDeslikeModel
+const ProductAndNewsLikeAndDeslikeActonSchema = require("../../models/level1/ProductAndNewsLikeAndDeslikeActon.model");
 const tokenDeCoded = require("../../core/utility/tokenDeCoded");
 
 const createNewComment = async (req, res, next) => {
@@ -120,7 +122,7 @@ const likeComment = async (req, res, next) => {
     const { ProductId, CommentId } = req.params;
     const userId = tokenDeCoded(req).payload.id;
 
-    const result = await LikeAndDeslikeModel.updateOne(
+    const result = await ProductAndNewsLikeAndDeslikeActonSchema.updateOne(
       {
         targetId: ProductId,
         commentId: CommentId,
@@ -139,7 +141,7 @@ const likeComment = async (req, res, next) => {
         .json({ message: "شما قبلاً این کامنت را لایک کرده‌اید" });
     }
 
-    const likeDoc = await LikeAndDeslikeModel.findOne({
+    const likeDoc = await ProductAndNewsLikeAndDeslikeActonSchema.findOne({
       targetId: ProductId,
       commentId: CommentId,
     });
@@ -164,7 +166,7 @@ const deslikeComment = async (req, res, next) => {
     const { ProductId, CommentId } = req.params;
     const userId = tokenDeCoded(req).payload.id;
 
-    const result = await LikeAndDeslikeModel.updateOne(
+    const result = await ProductAndNewsLikeAndDeslikeActonSchema.updateOne(
       {
         targetId: ProductId,
         commentId: CommentId,
@@ -182,7 +184,7 @@ const deslikeComment = async (req, res, next) => {
         .json({ message: "شما قبلاً این کامنت را دیسلایک کرده‌اید" });
     }
 
-    const likeDoc = await LikeAndDeslikeModel.findOne({
+    const likeDoc = await ProductAndNewsLikeAndDeslikeActonSchema.findOne({
       targetId: ProductId,
       commentId: CommentId,
     });
